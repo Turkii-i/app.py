@@ -208,43 +208,41 @@ def lesson():
         st.success(explain)
 
     # ================= QUIZ =================
-    quiz_data = LESSON_CONTENT.get(subject, {}).get(grade, {}).get(topic, {}).get("quiz")
+    # ================= QUIZ =================
+quiz_data = LESSON_CONTENT.get(subject, {}).get(grade, {}).get(topic, {}).get("quiz")
 
-    if quiz_data:
-        st.markdown("### 🧪 Quiz")
+if quiz_data:
+    st.markdown("### 🧪 Quiz")
 
-        st.write(quiz_data["question"])
+    st.write(quiz_data["question"])
 
-        student_answer = st.text_input("Your Answer")
+    student_answer = st.text_input("Your Answer")
 
-    
     if st.button("Submit Answer"):
-    correct = student_answer.strip().lower() == quiz_data["answer"].lower()
+        correct = student_answer.strip().lower() == quiz_data["answer"].lower()
 
-    if correct:
-        st.success("Correct 🎉")
-        st.info(quiz_data["explanation"])
+        if correct:
+            st.success("Correct 🎉")
+            st.info(quiz_data["explanation"])
 
-        st.session_state.progress[subject] = min(
-            100,
-            st.session_state.progress[subject] + 2
-        )
+            st.session_state.progress[subject] = min(
+                100,
+                st.session_state.progress[subject] + 2
+            )
 
-    else:
-        st.error("Incorrect ❌")
-        st.info(quiz_data["explanation"])
+        else:
+            st.error("Incorrect ❌")
+            st.info(quiz_data["explanation"])
 
-        st.session_state.progress[subject] = max(
-            0,
-            st.session_state.progress[subject] - 1
-        )
+            st.session_state.progress[subject] = max(
+                0,
+                st.session_state.progress[subject] - 1
+            )
 
-        if "mistakes" not in st.session_state:
-            st.session_state.mistakes = {}
+            if "mistakes" not in st.session_state:
+                st.session_state.mistakes = {}
 
-        st.session_state.mistakes[topic] = st.session_state.mistakes.get(topic, 0) + 1
-        
-
+            st.session_state.mistakes[topic] = st.session_state.mistakes.get(topic, 0) + 1
 # ===================== ROUTER =====================
 if not st.session_state.logged_in:
     auth()
