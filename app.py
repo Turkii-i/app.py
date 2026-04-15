@@ -187,6 +187,55 @@ def lesson():
     st.markdown(f"<div class='card'><b>Topic:</b> {topic}</div>", unsafe_allow_html=True)
 
     if st.button("🧠 AI Explain"):
+        # ================= QUIZ SECTION =================
+if "quiz_question" not in st.session_state:
+    st.session_state.quiz_question = None
+
+if st.button("📝 Generate Quiz"):
+    quiz_prompt = f"""
+    Create ONE short question for {grade} {subject} about {topic}.
+    Provide:
+    Question:
+    Correct Answer:
+    Explanation:
+    """
+
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": quiz_prompt}]
+    )
+
+    st.session_state.quiz_question = res.choices[0].message.content
+
+if st.session_state.quiz_question:
+    st.markdown("### 🧪 Quiz")
+    st.markdown(st.session_state.quiz_question)
+
+    student_answer = st.text_input("Your Answer")
+
+    if st.button("✅ Submit Answer"):
+        correction_prompt = f"""
+        Question and Answer:
+        {st.session_state.quiz_question}
+
+        Student Answer:
+        {student_answer}
+
+        Check if correct.
+        Respond with:
+        Result: Correct or Incorrect
+        Explanation:
+        """
+
+        result = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": correction_prompt}]
+        )
+
+        st.success(result.choices[0].message.content)
+
+        # simple progress update
+        st.session_state.progress[subject] += 5
         result = ai_explain(subject, topic, grade)
         st.success(result)
 
