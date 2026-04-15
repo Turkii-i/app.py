@@ -209,7 +209,7 @@ def lesson():
 
     # ================= QUIZ =================
     # ================= QUIZ =================
-quiz_data = LESSON_CONTENT.get(subject, {}).get(grade, {}).get(topic, {}).get("quiz")
+    quiz_data = LESSON_CONTENT.get(subject, {}).get(grade, {}).get(topic, {}).get("quiz")
 
 if quiz_data:
     st.markdown("### 🧪 Quiz")
