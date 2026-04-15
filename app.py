@@ -209,8 +209,8 @@ def lesson():
 
         student_answer = st.text_input("Your Answer")
 
-        if st.button("Submit Answer"):
-    correct = student_answer.strip().lower() == quiz_data["answer"].lower()
+    if st.button("Submit Answer"):
+        correct = student_answer.strip().lower() == quiz_data["answer"].lower()
 
     if correct:
         st.success("Correct 🎉")
