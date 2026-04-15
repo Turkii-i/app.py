@@ -186,58 +186,61 @@ def lesson():
 
     st.markdown(f"<div class='card'><b>Topic:</b> {topic}</div>", unsafe_allow_html=True)
 
+    # ================= AI EXPLAIN =================
     if st.button("🧠 AI Explain"):
-        # ================= QUIZ SECTION =================
-if "quiz_question" not in st.session_state:
-    st.session_state.quiz_question = None
+        explanation = ai_explain(subject, topic, grade)
+        st.success(explanation)
 
-if st.button("📝 Generate Quiz"):
-    quiz_prompt = f"""
-    Create ONE short question for {grade} {subject} about {topic}.
-    Provide:
-    Question:
-    Correct Answer:
-    Explanation:
-    """
+    # ================= QUIZ INIT =================
+    if "quiz_question" not in st.session_state:
+        st.session_state.quiz_question = None
 
-    res = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": quiz_prompt}]
-    )
-
-    st.session_state.quiz_question = res.choices[0].message.content
-
-if st.session_state.quiz_question:
-    st.markdown("### 🧪 Quiz")
-    st.markdown(st.session_state.quiz_question)
-
-    student_answer = st.text_input("Your Answer")
-
-    if st.button("✅ Submit Answer"):
-        correction_prompt = f"""
-        Question and Answer:
-        {st.session_state.quiz_question}
-
-        Student Answer:
-        {student_answer}
-
-        Check if correct.
-        Respond with:
-        Result: Correct or Incorrect
+    # ================= GENERATE QUIZ =================
+    if st.button("📝 Generate Quiz"):
+        quiz_prompt = f"""
+        Create ONE short question for {grade} {subject} about {topic}.
+        Provide:
+        Question:
+        Correct Answer:
         Explanation:
         """
 
-        result = client.chat.completions.create(
+        res = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": correction_prompt}]
+            messages=[{"role": "user", "content": quiz_prompt}]
         )
 
-        st.success(result.choices[0].message.content)
+        st.session_state.quiz_question = res.choices[0].message.content
 
-        # simple progress update
-        st.session_state.progress[subject] += 5
-        result = ai_explain(subject, topic, grade)
-        st.success(result)
+    # ================= SHOW QUIZ =================
+    if st.session_state.quiz_question:
+        st.markdown("### 🧪 Quiz")
+        st.markdown(st.session_state.quiz_question)
+
+        student_answer = st.text_input("Your Answer")
+
+        if st.button("✅ Submit Answer") and student_answer:
+            correction_prompt = f"""
+            Question and Answer:
+            {st.session_state.quiz_question}
+
+            Student Answer:
+            {student_answer}
+
+            Check if correct.
+            Respond with:
+            Result: Correct or Incorrect
+            Explanation:
+            """
+
+            result = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": correction_prompt}]
+            )
+
+            st.success(result.choices[0].message.content)
+
+            st.session_state.progress[subject] += 5
 
 # ===================== ROUTER =====================
 if not st.session_state.logged_in:
