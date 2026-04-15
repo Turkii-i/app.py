@@ -210,25 +210,33 @@ def lesson():
         student_answer = st.text_input("Your Answer")
 
         if st.button("Submit Answer"):
-            correct = student_answer.strip().lower() == quiz_data["answer"].lower()
+    correct = student_answer.strip().lower() == quiz_data["answer"].lower()
 
-            if correct:
-                st.success("Correct 🎉")
-                st.info(quiz_data["explanation"])
+    if correct:
+        st.success("Correct 🎉")
+        st.info(quiz_data["explanation"])
 
-                st.session_state.progress[subject] = min(
-                    100,
-                    st.session_state.progress[subject] + 2
-                )
-            else:
-                st.error("Incorrect ❌")
-                st.info(quiz_data["explanation"])
+        st.session_state.progress[subject] = min(
+            100,
+            st.session_state.progress[subject] + 2
+        )
+    else:
+        st.error("Incorrect ❌")
+        st.info(quiz_data["explanation"])
 
-                st.session_state.progress[subject] = max(
-                    0,
-                    st.session_state.progress[subject] - 1
-                )
-            score = st.session_state.progress[subject]
+        st.session_state.progress[subject] = max(
+            0,
+            st.session_state.progress[subject] - 1
+        )
+
+        # ================= mistakes tracking =================
+        if "mistakes" not in st.session_state:
+            st.session_state.mistakes = {}
+
+        st.session_state.mistakes[topic] = st.session_state.mistakes.get(topic, 0) + 1
+
+    # ================= level system =================
+    score = st.session_state.progress[subject]
 
     if score >= 80:
         level = "Advanced"
@@ -238,8 +246,6 @@ def lesson():
         level = "Beginner"
 
     st.markdown(f"### 📊 Level: {level}")
-            if "mistakes" not in st.session_state:
-                st.session_state.mistakes = {}
 
             st.session_state.mistakes[topic] = st.session_state.mistakes.get(topic, 0) + 1
 # ===================== ROUTER =====================
