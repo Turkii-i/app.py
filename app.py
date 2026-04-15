@@ -216,6 +216,8 @@ def lesson():
         st.write(quiz_data["question"])
 
         student_answer = st.text_input("Your Answer")
+
+    
     if st.button("Submit Answer"):
     correct = student_answer.strip().lower() == quiz_data["answer"].lower()
 
@@ -223,7 +225,6 @@ def lesson():
         st.success("Correct 🎉")
         st.info(quiz_data["explanation"])
 
-        # زيادة بسيطة عند الصح
         st.session_state.progress[subject] = min(
             100,
             st.session_state.progress[subject] + 2
@@ -233,13 +234,11 @@ def lesson():
         st.error("Incorrect ❌")
         st.info(quiz_data["explanation"])
 
-        # نقصان بسيط عند الغلط
         st.session_state.progress[subject] = max(
             0,
             st.session_state.progress[subject] - 1
         )
 
-        # تسجيل الأخطاء
         if "mistakes" not in st.session_state:
             st.session_state.mistakes = {}
 
