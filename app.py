@@ -228,7 +228,16 @@ def lesson():
                     0,
                     st.session_state.progress[subject] - 1
                 )
+            score = st.session_state.progress[subject]
 
+    if score >= 80:
+        level = "Advanced"
+    elif score >= 50:
+        level = "Medium"
+    else:
+        level = "Beginner"
+
+    st.markdown(f"### 📊 Level: {level}")
             if "mistakes" not in st.session_state:
                 st.session_state.mistakes = {}
 
