@@ -39,6 +39,62 @@ if "grade" not in st.session_state:
 
 if "progress" not in st.session_state:
     st.session_state.progress = {"Math": 50, "Science": 50, "English": 50}
+#تقييم النسبة المئوية
+if "lesson_completed" not in st.session_state:
+    st.session_state.lesson_completed = {
+        "Math": {},
+        "Science": {},
+        "English": {}
+    }
+
+if "quiz_stats" not in st.session_state:
+    st.session_state.quiz_stats = {
+        "Math": {"correct": 0, "total": 0},
+        "Science": {"correct": 0, "total": 0},
+        "English": {"correct": 0, "total": 0}
+    }
+
+if "quiz_results" not in st.session_state:
+    st.session_state.quiz_results = {
+        "total": 0,
+        "correct": 0
+    }
+
+#النسب وتفصيلها
+def calculate_progress(subject):
+    # عدد الدروس
+    total_lessons = sum(len(CURRICULUM[subject][g]) for g in CURRICULUM[subject])
+    
+    completed_lessons = len(st.session_state.lesson_completed[subject])
+    
+    lesson_percent = 0
+    if total_lessons > 0:
+        lesson_percent = (completed_lessons / total_lessons) * 100
+
+    # الكويز
+    quiz = st.session_state.quiz_stats[subject]
+    
+    quiz_percent = 0
+    if quiz["total"] > 0:
+        quiz_percent = (quiz["correct"] / quiz["total"]) * 100
+
+    # المعادلة
+    final_score = (lesson_percent * 0.4) + (quiz_percent * 0.6)
+
+    # المستوى
+    if final_score >= 70:
+        level = "Advanced"
+    elif final_score >= 40:
+        level = "Intermediate"
+    else:
+        level = "Beginner"
+
+    return round(final_score), level
+
+#تسجيل الدروس المكتملة
+if "completed_lessons" not in st.session_state:
+    st.session_state.completed_lessons = []
+
 
 # ===================== CURRICULUM =====================
 CURRICULUM = {
@@ -58,52 +114,54 @@ CURRICULUM = {
 
 # ===================== LESSON CONTENT (OFFLINE AI) =====================
 LESSON_CONTENT = {
-    "Math": {
-        "Grade 5": {
-            "Fractions": {
-                "explain": "Fractions represent parts of a whole. Example: 1/2 means one out of two equal parts.",
-                "quiz": {
-                    "question": "What is 1/2 of 10?",
-                    "answer": "5",
-                    "explanation": "Half of 10 is 5 because 10 ÷ 2 = 5"
-                }
-            },
-            "Decimals": {
-                "explain": "Decimals are numbers like 0.5 or 1.2 used to represent fractions.",
-                "quiz": {
-                    "question": "What is 0.5 + 0.5?",
-                    "answer": "1",
-                    "explanation": "0.5 + 0.5 = 1"
+    "Grade 5": {
+        "Term 1": {
+            "Math": {
+                "Unit 1: Fractions": {
+                    "Lesson 1: Introduction to Fractions": {
+                        "video": "",
+                        "explain": "Fractions represent parts of a whole.",
+                        "quiz": {
+                            "question": "What is 1/2 of 8?",
+                            "answer": "4",
+                            "explanation": "8 ÷ 2 = 4"
+                        }
+                    }
                 }
             }
-        }
-    },
-    "Science": {
-        "Grade 5": {
-            "Ecosystem": {
-                "explain": "An ecosystem is a community of living things interacting with environment.",
-                "quiz": {
-                    "question": "Is a tree living or non-living?",
-                    "answer": "living",
-                    "explanation": "A tree grows and reproduces so it is living."
+        },
+        "Term 2": {
+            "Math": {
+                "Unit 2: Decimals": {
+                    "Lesson 1: Introduction to Decimals": {
+                        "video": "",
+                        "explain": "Decimals are another way to represent fractions.",
+                        "quiz": {
+                            "question": "What is 0.5 + 0.5?",
+                            "answer": "1",
+                            "explanation": "0.5 + 0.5 = 1"
+                        }
+                    }
                 }
             }
-        }
-    },
-    "English": {
-        "Grade 5": {
-            "Grammar Basics": {
-                "explain": "Grammar helps us structure sentences correctly.",
-                "quiz": {
-                    "question": "What is a noun?",
-                    "answer": "a person place or thing",
-                    "explanation": "A noun is a person, place, or thing."
+        },
+        "Term 3": {
+            "Math": {
+                "Unit 3: Geometry": {
+                    "Lesson 1: Basic Shapes": {
+                        "video": "",
+                        "explain": "Geometry studies shapes and space.",
+                        "quiz": {
+                            "question": "How many sides does a triangle have?",
+                            "answer": "3",
+                            "explanation": "A triangle has 3 sides."
+                        }
+                    }
                 }
             }
         }
     }
 }
-
 # ===================== UI STYLE =====================
 st.markdown("""
 <style>
@@ -189,15 +247,72 @@ def home():
 
 # ===================== LESSON =====================
 def lesson():
-    subject = st.session_state.subject
     grade = st.session_state.grade
 
-    st.markdown(f"<div class='main-title'>{subject}</div>", unsafe_allow_html=True)
+    term = st.selectbox("Select Term", ["Term 1", "Term 2", "Term 3"])
 
-    topics = CURRICULUM[subject][grade]
-    topic = st.selectbox("Choose Topic", topics)
+    subjects = list(LESSON_CONTENT.get(grade, {}).get(term, {}).keys())
+    subject = st.selectbox("Select Subject", subjects)
 
-    st.markdown(f"<div class='card'><b>Topic:</b> {topic}</div>", unsafe_allow_html=True)
+    units = list(LESSON_CONTENT[grade][term][subject].keys())
+    unit = st.selectbox("Select Unit", units)
+
+    lessons = list(LESSON_CONTENT[grade][term][subject][unit].keys())
+    lesson_name = st.selectbox("Select Lesson", lessons)
+
+    lesson_data = LESSON_CONTENT[grade][term][subject][unit][lesson_name]
+
+    st.markdown(f"## 📘 {lesson_name}")
+
+    # 🎥 Video
+    st.video(lesson_data["video"])
+
+    # 📖 Explanation
+    if st.button("Show Explanation"):
+        st.success(lesson_data["explain"])
+
+    if st.button("✅ Mark Lesson as Completed"):
+    lesson_id = f"{subject}_{grade}_{topic}"
+
+    if lesson_id not in st.session_state.completed_lessons:
+        st.session_state.completed_lessons.append(lesson_id)
+        st.success("Lesson marked as completed ✔️")
+    else:
+        st.info("Already completed")
+
+    completed = len(st.session_state.completed_lessons)
+total = sum(len(CURRICULUM[s][g]) for s in CURRICULUM for g in CURRICULUM[s])
+
+lesson_percent = (completed / total) * 100 if total > 0 else 0
+
+    # 🧠 Quiz
+    quiz = lesson_data.get("quiz")
+
+    if quiz:
+        st.markdown("### 🧪 Quiz")
+        st.write(quiz["question"])
+
+        student_answer = st.text_input("Your Answer")
+
+        if st.button("Submit Answer"):
+
+    st.session_state.quiz_results["total"] += 1
+
+    correct = student_answer.strip().lower() == quiz_data["answer"].lower()
+
+    if correct:
+        st.session_state.quiz_results["correct"] += 1
+        st.success("Correct 🎉")
+        st.info(quiz_data["explanation"])
+    else:
+        st.error("Incorrect ❌")
+        st.info(quiz_data["explanation"])
+
+    score, level = calculate_progress(subject)
+
+st.markdown(f"### 📊 Progress: {score}%")
+st.markdown(f"### 🎓 Level: {level}")
+
 
     # ================= QUIZ =================
     quiz_data = LESSON_CONTENT.get(subject, {}).get(grade, {}).get(topic, {}).get("quiz")
@@ -228,7 +343,18 @@ def lesson():
             0,
             st.session_state.progress[subject] - 1
         )
+    if st.session_state.quiz_results["total"] > 0:
+    score = (st.session_state.quiz_results["correct"] /
+             st.session_state.quiz_results["total"]) * 100
 
+    st.markdown(f"### 🧪 Quiz Score: {round(score)}%")
+
+    if score >= 70:
+        st.success("Excellent 🎓")
+    elif score >= 40:
+        st.warning("Good, keep improving 📈")
+    else:
+        st.error("Needs practice 📚")  
         # ================= mistakes tracking =================
         if "mistakes" not in st.session_state:
             st.session_state.mistakes = {}
