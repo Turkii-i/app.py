@@ -1,0 +1,14 @@
+{
+  "Grade 5": {
+    "Math": {
+      "Fractions": {
+        "explain": "Fractions represent parts of a whole.",
+        "quiz": {
+          "question": "What is 1/2 of 8?",
+          "answer": "4",
+          "explanation": "Because 8 ÷ 2 = 4"
+        }
+      }
+    }
+  }
+}
