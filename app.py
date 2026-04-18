@@ -1,9 +1,13 @@
 import streamlit as st
 import json
 import os
+from openai import OpenAI
 
-# ===================== PAGE CONFIG =====================
+# ===================== CONFIG =====================
 st.set_page_config(page_title="AI School Companion", layout="wide")
+
+# ===================== OPENAI CLIENT =====================
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # ===================== STORAGE =====================
 DATA_FILE = "users_db.json"
@@ -37,11 +41,11 @@ if "subject" not in st.session_state:
 if "grade" not in st.session_state:
     st.session_state.grade = "Grade 5"
 
-if "progress" not in st.session_state:
-    st.session_state.progress = {"Math": 50, "Science": 50, "English": 50}
+if "xp" not in st.session_state:
+    st.session_state.xp = 0
 
-if "completed_lessons" not in st.session_state:
-    st.session_state.completed_lessons = []
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
 if "quiz_results" not in st.session_state:
     st.session_state.quiz_results = {"correct": 0, "total": 0}
@@ -61,6 +65,15 @@ CURRICULUM = {
         "Grade 6": ["Writing", "Vocabulary"]
     }
 }
+
+# ===================== LEVEL SYSTEM =====================
+def get_level(xp):
+    if xp >= 300:
+        return "Advanced 🏆"
+    elif xp >= 100:
+        return "Intermediate 🔥"
+    else:
+        return "Beginner 🌱"
 
 # ===================== AUTH =====================
 def auth():
@@ -83,7 +96,7 @@ def auth():
                 save_users(st.session_state.users)
                 st.success("Account created")
             else:
-                st.error("User exists")
+                st.error("User already exists")
 
     if mode == "Login":
         if st.button("Login"):
@@ -92,7 +105,6 @@ def auth():
                 st.session_state.logged_in = True
                 st.session_state.current_user = username
                 st.session_state.grade = user["grade"]
-                st.session_state.progress = user["progress"]
                 st.session_state.page = "home"
                 st.success("Welcome!")
             else:
@@ -102,10 +114,11 @@ def auth():
 def home():
     st.title(f"Welcome {st.session_state.current_user}")
 
-    st.write("### Progress")
+    st.write("## 📊 Profile")
+    st.write("XP:", st.session_state.xp)
+    st.write("Level:", get_level(st.session_state.xp))
 
-    for sub, val in st.session_state.progress.items():
-        st.write(f"{sub}: {val}%")
+    st.write("## 📚 Subjects")
 
     if st.button("Math"):
         st.session_state.subject = "Math"
@@ -119,6 +132,26 @@ def home():
         st.session_state.subject = "English"
         st.session_state.page = "lesson"
 
+# ===================== AI TUTOR =====================
+def ai_response(question, subject):
+    try:
+        res = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"You are a friendly school teacher teaching {subject}. Explain simply."
+                },
+                {
+                    "role": "user",
+                    "content": question
+                }
+            ]
+        )
+        return res.choices[0].message.content
+    except:
+        return "AI error. Check API key."
+
 # ===================== LESSON =====================
 def lesson():
     subject = st.session_state.subject
@@ -126,46 +159,55 @@ def lesson():
 
     st.title(subject)
 
-    topics = CURRICULUM[subject][grade]
-    topic = st.selectbox("Topic", topics)
+    topic = st.selectbox("Choose Topic", CURRICULUM[subject][grade])
 
-    st.write(f"### {topic}")
+    st.write("## 🧠 Lesson: ", topic)
 
-    # Mark completed
-    if st.button("Mark as Completed"):
-        lesson_id = f"{subject}_{grade}_{topic}"
-        if lesson_id not in st.session_state.completed_lessons:
-            st.session_state.completed_lessons.append(lesson_id)
-            st.success("Completed!")
+    # XP for lesson
+    if st.button("Mark Lesson Completed"):
+        st.session_state.xp += 20
+        st.success("+20 XP")
 
     # Quiz
-    question = "Sample question?"
-    answer = "1"
-
-    st.write("### Quiz")
+    question = f"What do you know about {topic}?"
+    st.write("### 🧪 Quiz")
     st.write(question)
 
-    user_ans = st.text_input("Answer")
+    answer = st.text_input("Your Answer")
 
-    if st.button("Submit"):
+    if st.button("Submit Quiz"):
         st.session_state.quiz_results["total"] += 1
 
-        if user_ans.strip() == answer:
+        if len(answer) > 3:
             st.session_state.quiz_results["correct"] += 1
-            st.success("Correct")
+            st.session_state.xp += 10
+            st.success("Correct +10 XP")
         else:
-            st.error("Wrong")
+            st.error("Try again")
 
-        score = (st.session_state.quiz_results["correct"] /
-                 st.session_state.quiz_results["total"]) * 100
+    # AI TUTOR
+    st.write("## 🤖 Ask AI Tutor")
 
-        st.write(f"Score: {score}%")
+    user_q = st.text_input("Ask anything")
+
+    if user_q:
+        response = ai_response(user_q, subject)
+        st.write(response)
+
+        st.session_state.chat_history.append((user_q, response))
+
+    # history
+    if st.session_state.chat_history:
+        st.write("## 💬 Chat History")
+        for q, a in st.session_state.chat_history:
+            st.write("**You:**", q)
+            st.write("**AI:**", a)
+            st.write("---")
 
 # ===================== ROUTER =====================
 if not st.session_state.logged_in:
     auth()
-else:
-    if st.session_state.page == "home":
-        home()
-    else:
-        lesson()
+elif st.session_state.page == "home":
+    home()
+elif st.session_state.page == "lesson":
+    lesson()
