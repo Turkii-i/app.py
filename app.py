@@ -39,62 +39,12 @@ if "grade" not in st.session_state:
 
 if "progress" not in st.session_state:
     st.session_state.progress = {"Math": 50, "Science": 50, "English": 50}
-#تقييم النسبة المئوية
-if "lesson_completed" not in st.session_state:
-    st.session_state.lesson_completed = {
-        "Math": {},
-        "Science": {},
-        "English": {}
-    }
 
-if "quiz_stats" not in st.session_state:
-    st.session_state.quiz_stats = {
-        "Math": {"correct": 0, "total": 0},
-        "Science": {"correct": 0, "total": 0},
-        "English": {"correct": 0, "total": 0}
-    }
-
-if "quiz_results" not in st.session_state:
-    st.session_state.quiz_results = {
-        "total": 0,
-        "correct": 0
-    }
-
-#النسب وتفصيلها
-def calculate_progress(subject):
-    # عدد الدروس
-    total_lessons = sum(len(CURRICULUM[subject][g]) for g in CURRICULUM[subject])
-    
-    completed_lessons = len(st.session_state.lesson_completed[subject])
-    
-    lesson_percent = 0
-    if total_lessons > 0:
-        lesson_percent = (completed_lessons / total_lessons) * 100
-
-    # الكويز
-    quiz = st.session_state.quiz_stats[subject]
-    
-    quiz_percent = 0
-    if quiz["total"] > 0:
-        quiz_percent = (quiz["correct"] / quiz["total"]) * 100
-
-    # المعادلة
-    final_score = (lesson_percent * 0.4) + (quiz_percent * 0.6)
-
-    # المستوى
-    if final_score >= 70:
-        level = "Advanced"
-    elif final_score >= 40:
-        level = "Intermediate"
-    else:
-        level = "Beginner"
-
-    return round(final_score), level
-
-#تسجيل الدروس المكتملة
 if "completed_lessons" not in st.session_state:
     st.session_state.completed_lessons = []
 
+if "quiz_results" not in st.session_state:
+    st.session_state.quiz_results = {"correct": 0, "total": 0}
 
 # ===================== CURRICULUM =====================
 CURRICULUM = {
@@ -112,74 +62,9 @@ CURRICULUM = {
     }
 }
 
-# ===================== LESSON CONTENT (OFFLINE AI) =====================
-LESSON_CONTENT = {
-    "Grade 5": {
-        "Term 1": {
-            "Math": {
-                "Unit 1: Fractions": {
-                    "Lesson 1: Introduction to Fractions": {
-                        "video": "",
-                        "explain": "Fractions represent parts of a whole.",
-                        "quiz": {
-                            "question": "What is 1/2 of 8?",
-                            "answer": "4",
-                            "explanation": "8 ÷ 2 = 4"
-                        }
-                    }
-                }
-            }
-        },
-        "Term 2": {
-            "Math": {
-                "Unit 2: Decimals": {
-                    "Lesson 1: Introduction to Decimals": {
-                        "video": "",
-                        "explain": "Decimals are another way to represent fractions.",
-                        "quiz": {
-                            "question": "What is 0.5 + 0.5?",
-                            "answer": "1",
-                            "explanation": "0.5 + 0.5 = 1"
-                        }
-                    }
-                }
-            }
-        },
-        "Term 3": {
-            "Math": {
-                "Unit 3: Geometry": {
-                    "Lesson 1: Basic Shapes": {
-                        "video": "",
-                        "explain": "Geometry studies shapes and space.",
-                        "quiz": {
-                            "question": "How many sides does a triangle have?",
-                            "answer": "3",
-                            "explanation": "A triangle has 3 sides."
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-# ===================== UI STYLE =====================
-st.markdown("""
-<style>
-.main-title {font-size:44px; font-weight:900; color:#1f4fff;}
-.subtitle {font-size:18px; color:#666;}
-.card {
-    background:white;
-    padding:18px;
-    border-radius:16px;
-    box-shadow:0 6px 18px rgba(0,0,0,0.08);
-    margin-bottom:12px;
-}
-</style>
-""", unsafe_allow_html=True)
-
 # ===================== AUTH =====================
 def auth():
-    st.markdown("<div class='main-title'>🎓 AI School Companion</div>", unsafe_allow_html=True)
+    st.title("🎓 AI School Companion")
 
     mode = st.radio("Mode", ["Login", "Register"])
 
@@ -198,7 +83,7 @@ def auth():
                 save_users(st.session_state.users)
                 st.success("Account created")
             else:
-                st.error("User already exists")
+                st.error("User exists")
 
     if mode == "Login":
         if st.button("Login"):
@@ -215,170 +100,72 @@ def auth():
 
 # ===================== HOME =====================
 def home():
-    st.markdown(f"<div class='main-title'>Welcome {st.session_state.current_user}</div>", unsafe_allow_html=True)
+    st.title(f"Welcome {st.session_state.current_user}")
 
-    st.markdown("### 📊 Progress")
+    st.write("### Progress")
 
-    cols = st.columns(3)
-    for i, (sub, val) in enumerate(st.session_state.progress.items()):
-        with cols[i]:
-            st.markdown(f"""
-            <div class='card'>
-            <h3>{sub}</h3>
-            <h2>{val}%</h2>
-            </div>
-            """, unsafe_allow_html=True)
+    for sub, val in st.session_state.progress.items():
+        st.write(f"{sub}: {val}%")
 
-    st.markdown("### 📚 Subjects")
-
-    c1, c2, c3 = st.columns(3)
-
-    if c1.button("Math"):
+    if st.button("Math"):
         st.session_state.subject = "Math"
         st.session_state.page = "lesson"
 
-    if c2.button("Science"):
+    if st.button("Science"):
         st.session_state.subject = "Science"
         st.session_state.page = "lesson"
 
-    if c3.button("English"):
+    if st.button("English"):
         st.session_state.subject = "English"
         st.session_state.page = "lesson"
 
 # ===================== LESSON =====================
 def lesson():
+    subject = st.session_state.subject
     grade = st.session_state.grade
 
-    term = st.selectbox("Select Term", ["Term 1", "Term 2", "Term 3"])
+    st.title(subject)
 
-    subjects = list(LESSON_CONTENT.get(grade, {}).get(term, {}).keys())
-    subject = st.selectbox("Select Subject", subjects)
+    topics = CURRICULUM[subject][grade]
+    topic = st.selectbox("Topic", topics)
 
-    units = list(LESSON_CONTENT[grade][term][subject].keys())
-    unit = st.selectbox("Select Unit", units)
+    st.write(f"### {topic}")
 
-    lessons = list(LESSON_CONTENT[grade][term][subject][unit].keys())
-    lesson_name = st.selectbox("Select Lesson", lessons)
+    # Mark completed
+    if st.button("Mark as Completed"):
+        lesson_id = f"{subject}_{grade}_{topic}"
+        if lesson_id not in st.session_state.completed_lessons:
+            st.session_state.completed_lessons.append(lesson_id)
+            st.success("Completed!")
 
-    lesson_data = LESSON_CONTENT[grade][term][subject][unit][lesson_name]
+    # Quiz
+    question = "Sample question?"
+    answer = "1"
 
-    st.markdown(f"## 📘 {lesson_name}")
+    st.write("### Quiz")
+    st.write(question)
 
-    # 🎥 Video
-    st.video(lesson_data["video"])
+    user_ans = st.text_input("Answer")
 
-    # 📖 Explanation
-    if st.button("Show Explanation"):
-        st.success(lesson_data["explain"])
+    if st.button("Submit"):
+        st.session_state.quiz_results["total"] += 1
 
-    if st.button("✅ Mark Lesson as Completed"):
-    lesson_id = f"{subject}_{grade}_{topic}"
+        if user_ans.strip() == answer:
+            st.session_state.quiz_results["correct"] += 1
+            st.success("Correct")
+        else:
+            st.error("Wrong")
 
-    if lesson_id not in st.session_state.completed_lessons:
-        st.session_state.completed_lessons.append(lesson_id)
-        st.success("Lesson marked as completed ✔️")
-    else:
-        st.info("Already completed")
+        score = (st.session_state.quiz_results["correct"] /
+                 st.session_state.quiz_results["total"]) * 100
 
-    completed = len(st.session_state.completed_lessons)
-total = sum(len(CURRICULUM[s][g]) for s in CURRICULUM for g in CURRICULUM[s])
+        st.write(f"Score: {score}%")
 
-lesson_percent = (completed / total) * 100 if total > 0 else 0
-
-    # 🧠 Quiz
-    quiz = lesson_data.get("quiz")
-
-    if quiz:
-        st.markdown("### 🧪 Quiz")
-        st.write(quiz["question"])
-
-        student_answer = st.text_input("Your Answer")
-
-        if st.button("Submit Answer"):
-
-    st.session_state.quiz_results["total"] += 1
-
-    correct = student_answer.strip().lower() == quiz_data["answer"].lower()
-
-    if correct:
-        st.session_state.quiz_results["correct"] += 1
-        st.success("Correct 🎉")
-        st.info(quiz_data["explanation"])
-    else:
-        st.error("Incorrect ❌")
-        st.info(quiz_data["explanation"])
-
-    score, level = calculate_progress(subject)
-
-st.markdown(f"### 📊 Progress: {score}%")
-st.markdown(f"### 🎓 Level: {level}")
-
-
-    # ================= QUIZ =================
-    quiz_data = LESSON_CONTENT.get(subject, {}).get(grade, {}).get(topic, {}).get("quiz")
-
-    if quiz_data:
-        st.markdown("### 🧪 Quiz")
-
-        st.write(quiz_data["question"])
-
-        student_answer = st.text_input("Your Answer")
-
-    if st.button("Submit Answer"):
-        correct = student_answer.strip().lower() == quiz_data["answer"].lower()
-
-    if correct:
-        st.success("Correct 🎉")
-        st.info(quiz_data["explanation"])
-
-        st.session_state.progress[subject] = min(
-            100,
-            st.session_state.progress[subject] + 2
-        )
-    else:
-        st.error("Incorrect ❌")
-        st.info(quiz_data["explanation"])
-
-        st.session_state.progress[subject] = max(
-            0,
-            st.session_state.progress[subject] - 1
-        )
-    if st.session_state.quiz_results["total"] > 0:
-    score = (st.session_state.quiz_results["correct"] /
-             st.session_state.quiz_results["total"]) * 100
-
-    st.markdown(f"### 🧪 Quiz Score: {round(score)}%")
-
-    if score >= 70:
-        st.success("Excellent 🎓")
-    elif score >= 40:
-        st.warning("Good, keep improving 📈")
-    else:
-        st.error("Needs practice 📚")  
-        # ================= mistakes tracking =================
-        if "mistakes" not in st.session_state:
-            st.session_state.mistakes = {}
-
-        st.session_state.mistakes[topic] = st.session_state.mistakes.get(topic, 0) + 1
-
-    # ================= level system =================
-    score = st.session_state.progress[subject]
-
-    if score >= 80:
-        level = "Advanced"
-    elif score >= 50:
-        level = "Medium"
-    else:
-        level = "Beginner"
-
-    st.markdown(f"### 📊 Level: {level}")
-
-            st.session_state.mistakes[topic] = st.session_state.mistakes.get(topic, 0) + 1
 # ===================== ROUTER =====================
 if not st.session_state.logged_in:
     auth()
 else:
     if st.session_state.page == "home":
         home()
-    elif st.session_state.page == "lesson":
+    else:
         lesson()
