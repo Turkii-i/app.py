@@ -78,25 +78,48 @@ def auth():
         st.session_state.current_user = username
         st.success("Logged in!")
 
+def get_level(points):
+    if points >= 80:
+        return "Advanced"
+    elif points >= 40:
+        return "Intermediate"
+    else:
+        return "Beginner"
+
 # ===================== HOME =====================
 def home():
-    st.title(f"Welcome {st.session_state.current_user}")
+    st.title(f"👋 Welcome {st.session_state.current_user}")
 
-    st.markdown(f"### 🏆 Points: {st.session_state.points}")
+    points = st.session_state.points
+    level = get_level(points)
 
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("### 🏆 Points")
+        st.metric("Score", points)
+
+    with col2:
+        st.markdown("### 🎓 Level")
+        st.metric("Level", level)
+
+    st.markdown("---")
     st.markdown("## 📚 Subjects")
 
-    if st.button("Math"):
+    if st.button("📘 Math"):
         st.session_state.subject = "Math"
         st.session_state.page = "lesson"
 
-    if st.button("Science"):
+    if st.button("🔬 Science"):
         st.session_state.subject = "Science"
         st.session_state.page = "lesson"
 
-    if st.button("English"):
+    if st.button("📗 English"):
         st.session_state.subject = "English"
         st.session_state.page = "lesson"
+
+    if st.button("📊 View Report"):
+        st.session_state.page = "report"
 
 # ===================== LESSON =====================
 def lesson():
@@ -143,14 +166,29 @@ def lesson():
             st.error("Incorrect ❌")
             st.info(quiz["explanation"])
 
+#=================اضافة دالة الطالب=================
+def report():
+    st.title("📊 Student Report")
+
+    points = st.session_state.points
+    level = get_level(points)
+
+    st.markdown(f"### 🏆 Total Points: {points}")
+    st.markdown(f"### 🎓 Level: {level}")
+    st.markdown(f"### 📚 Completed Lessons: {len(st.session_state.completed_lessons)}")
+
+    st.progress(min(points / 100, 1.0))
+
+    if st.button("⬅ Back"):
+        st.session_state.page = "home"
+
 # ===================== ROUTER =====================
 if not st.session_state.logged_in:
     auth()
 else:
-    if "page" not in st.session_state:
-        st.session_state.page = "home"
-
     if st.session_state.page == "home":
         home()
     elif st.session_state.page == "lesson":
         lesson()
+    elif st.session_state.page == "report":
+        report()
