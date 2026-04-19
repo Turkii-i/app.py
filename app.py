@@ -88,9 +88,9 @@ def lesson():
     st.markdown(f"## 📘 {topic}")
     #===============اضافه============================
     if st.button("🎬 Generate Video Lesson Script"):
-    script = ai_video_script(subject, topic, lesson_data["explain"])
-    st.markdown("### 🎤 Video Script")
-    st.write(script)
+        script = ai_video_script(subject, topic, lesson_data["explain"])
+        st.markdown("### 🎤 Video Script")
+        st.write(script)
 
     # ================= EXPLANATION =================
     if st.button("🧠 AI Explain"):
