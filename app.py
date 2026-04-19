@@ -10,6 +10,9 @@ if "logged_in" not in st.session_state:
 if "current_user" not in st.session_state:
     st.session_state.current_user = None
 
+if "page" not in st.session_state:
+    st.session_state.page = "auth"
+
 if "grade" not in st.session_state:
     st.session_state.grade = "Grade 5"
 
@@ -19,9 +22,6 @@ if "points" not in st.session_state:
 if "completed_lessons" not in st.session_state:
     st.session_state.completed_lessons = []
 
-if "progress" not in st.session_state:
-    st.session_state.progress = {"Math": 0, "Science": 0, "English": 0}
-
 if "subject_progress" not in st.session_state:
     st.session_state.subject_progress = {
         "Math": 0,
@@ -29,42 +29,57 @@ if "subject_progress" not in st.session_state:
         "English": 0
     }
 
-# ===================== CURRICULUM (MVP VERSION) =====================
+# ===================== LEVEL =====================
+def get_level(points):
+    if points >= 80:
+        return "Advanced"
+    elif points >= 40:
+        return "Intermediate"
+    else:
+        return "Beginner"
+
+# ===================== CURRICULUM =====================
 LESSON_CONTENT = {
     "Grade 5": {
         "Term 1": {
             "Math": {
                 "Fractions": {
-                    "Lesson 1": {
-                        "explain": "Fractions represent parts of a whole. Example: 1/2 means half.",
-                        "quiz": {
-                            "question": "What is 1/2 of 10?",
-                            "answer": "5",
-                            "explanation": "10 ÷ 2 = 5"
+                    "Unit 1": {
+                        "Lesson 1": {
+                            "explain": "Fractions represent parts of a whole.",
+                            "quiz": {
+                                "question": "What is 1/2 of 10?",
+                                "answer": "5",
+                                "explanation": "10 ÷ 2 = 5"
+                            }
                         }
                     }
                 }
             },
             "Science": {
                 "Ecosystem": {
-                    "Lesson 1": {
-                        "explain": "An ecosystem is living things interacting with environment.",
-                        "quiz": {
-                            "question": "Is a tree living?",
-                            "answer": "yes",
-                            "explanation": "Trees grow so they are living."
+                    "Unit 1": {
+                        "Lesson 1": {
+                            "explain": "Ecosystem is interaction of living things.",
+                            "quiz": {
+                                "question": "Is a tree living?",
+                                "answer": "yes",
+                                "explanation": "Trees grow so they are living."
+                            }
                         }
                     }
                 }
             },
             "English": {
                 "Grammar": {
-                    "Lesson 1": {
-                        "explain": "Grammar helps build correct sentences.",
-                        "quiz": {
-                            "question": "What is a noun?",
-                            "answer": "person place or thing",
-                            "explanation": "A noun is a person, place or thing."
+                    "Unit 1": {
+                        "Lesson 1": {
+                            "explain": "Grammar builds correct sentences.",
+                            "quiz": {
+                                "question": "What is a noun?",
+                                "answer": "person place or thing",
+                                "explanation": "A noun is a person, place or thing."
+                            }
                         }
                     }
                 }
@@ -83,63 +98,39 @@ def auth():
     if st.button("Login"):
         st.session_state.logged_in = True
         st.session_state.current_user = username
+        st.session_state.page = "home"
         st.success("Logged in!")
-
-def get_level(points):
-    if points >= 80:
-        return "Advanced"
-    elif points >= 40:
-        return "Intermediate"
-    else:
-        return "Beginner"
 
 # ===================== HOME =====================
 def home():
-    st.title(f"👋 Welcome {st.session_state.current_user}")
+    st.title(f"Welcome {st.session_state.current_user}")
 
-    points = st.session_state.points
-    level = get_level(points)
+    st.markdown(f"### 🏆 Points: {st.session_state.points}")
+    st.markdown(f"### 🎓 Level: {get_level(st.session_state.points)}")
 
-    col1, col2 = st.columns(2)
+    st.markdown("## 📊 Subject Progress")
 
-    with col1:
-        st.markdown("### 🏆 Points")
-        st.metric("Score", points)
-
-    with col2:
-        st.markdown("### 🎓 Level")
-        st.metric("Level", level)
+    for subject, value in st.session_state.subject_progress.items():
+        st.write(subject)
+        st.progress(min(value / 100, 1.0))
 
     st.markdown("---")
     st.markdown("## 📚 Subjects")
 
-    if st.button("📘 Math"):
+    if st.button("Math"):
         st.session_state.subject = "Math"
         st.session_state.page = "lesson"
 
-    if st.button("🔬 Science"):
+    if st.button("Science"):
         st.session_state.subject = "Science"
         st.session_state.page = "lesson"
 
-    if st.button("📗 English"):
+    if st.button("English"):
         st.session_state.subject = "English"
         st.session_state.page = "lesson"
 
     if st.button("📊 View Report"):
         st.session_state.page = "report"
-
-st.markdown("## 📊 Subject Progress")
-
-for subject, value in st.session_state.subject_progress.items():
-    st.write(subject)
-    st.progress(min(value / 100, 1.0))
-
-def reward_message(points):
-    if points == 50:
-        st.success("🔥 Great Job! You're doing amazing!")
-    elif points == 100:
-        st.success("🏆 Excellent! Level Up!")
-    reward_message(st.session_state.points)
 
 # ===================== LESSON =====================
 def lesson():
@@ -154,23 +145,24 @@ def lesson():
 
     st.markdown(f"## 📘 {lesson_name}")
 
-    # ================= EXPLANATION =================
+    # ================= EXPLAIN =================
     if st.button("🧠 Show Explanation"):
         st.success(lesson_data["explain"])
 
     # ================= COMPLETE LESSON =================
     if st.button("✅ Mark Lesson as Completed"):
+
         lesson_id = f"{grade}_{term}_{subject}_{unit}_{lesson_name}"
 
-    if lesson_id not in st.session_state.completed_lessons:
-        st.session_state.completed_lessons.append(lesson_id)
+        if lesson_id not in st.session_state.completed_lessons:
+            st.session_state.completed_lessons.append(lesson_id)
 
-        st.session_state.points += 10
-        st.session_state.subject_progress[subject] += 10
+            st.session_state.points += 10
+            st.session_state.subject_progress[subject] += 10
 
-        st.success("Completed +10 Points 🎉")
-    else:
-        st.info("Already completed")
+            st.success("Lesson Completed +10 Points 🎉")
+        else:
+            st.info("Already completed")
 
     # ================= QUIZ =================
     quiz = lesson_data["quiz"]
@@ -184,23 +176,26 @@ def lesson():
         if answer.strip().lower() == quiz["answer"]:
             st.success("Correct 🎉")
             st.info(quiz["explanation"])
+
             st.session_state.points += 5
+            st.session_state.subject_progress[subject] += 5
         else:
             st.error("Incorrect ❌")
             st.info(quiz["explanation"])
 
-#=================اضافة دالة الطالب=================
+# ===================== REPORT =====================
 def report():
     st.title("📊 Student Report")
 
-    points = st.session_state.points
-    level = get_level(points)
-
-    st.markdown(f"### 🏆 Total Points: {points}")
-    st.markdown(f"### 🎓 Level: {level}")
+    st.markdown(f"### 🏆 Points: {st.session_state.points}")
+    st.markdown(f"### 🎓 Level: {get_level(st.session_state.points)}")
     st.markdown(f"### 📚 Completed Lessons: {len(st.session_state.completed_lessons)}")
 
-    st.progress(min(points / 100, 1.0))
+    st.markdown("### 📊 Progress")
+
+    for subject, value in st.session_state.subject_progress.items():
+        st.write(subject)
+        st.progress(min(value / 100, 1.0))
 
     if st.button("⬅ Back"):
         st.session_state.page = "home"
