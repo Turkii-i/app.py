@@ -43,6 +43,33 @@ Make it simple and step by step.
 
     return res.choices[0].message.content
 
+
+#=========اضافه==================================
+def ai_video_script(subject, topic, text):
+    prompt = f"""
+You are a professional teacher creating a video lesson.
+
+Create a short video script for students.
+
+Subject: {subject}
+Topic: {topic}
+Content: {text}
+
+Structure:
+- Introduction
+- Explanation step by step
+- Simple example
+- Summary
+
+Make it spoken, like a teacher talking.
+"""
+
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return res.choices[0].message.content
 # ===================== UI =====================
 st.title("📚 AI School Companion")
 
@@ -59,6 +86,11 @@ def lesson():
     lesson_data = CURRICULUM[grade][subject][topic]
 
     st.markdown(f"## 📘 {topic}")
+    ===============اضافه============================
+    if st.button("🎬 Generate Video Lesson Script"):
+    script = ai_video_script(subject, topic, lesson_data["explain"])
+    st.markdown("### 🎤 Video Script")
+    st.write(script)
 
     # ================= EXPLANATION =================
     if st.button("🧠 AI Explain"):
