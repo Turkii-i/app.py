@@ -107,6 +107,7 @@ def lesson():
     st.markdown(f"## 📘 {topic}")
     #===============اضافه============================
     if st.button("🎬 Generate AI Video Lesson"):
+
         script = ai_video_script(subject, topic, lesson_data["explain"])
 
         st.markdown("### 🎤 Video Script")
@@ -115,10 +116,10 @@ def lesson():
         st.markdown("### 🔊 Generating Voice...")
         audio_file = ai_generate_voice(script)
 
-    if audio_file:
-        st.audio(audio_file)
-    else:
-        st.error("Voice generation failed")
+        if audio_file:
+            st.audio(audio_file)
+        else:
+            st.error("Voice generation failed")
 
     # ================= EXPLANATION =================
     if st.button("🧠 AI Explain"):
