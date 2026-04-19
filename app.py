@@ -160,7 +160,7 @@ def lesson():
 
     # ================= COMPLETE LESSON =================
     if st.button("✅ Mark Lesson as Completed"):
-    lesson_id = f"{grade}_{term}_{subject}_{unit}_{lesson_name}"
+        lesson_id = f"{grade}_{term}_{subject}_{unit}_{lesson_name}"
 
     if lesson_id not in st.session_state.completed_lessons:
         st.session_state.completed_lessons.append(lesson_id)
