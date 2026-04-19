@@ -70,6 +70,25 @@ Make it spoken, like a teacher talking.
     )
 
     return res.choices[0].message.content
+#=============ADD============
+import tempfile
+
+def ai_generate_voice(text):
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_file:
+            speech_file_path = tmp_file.name
+
+        with client.audio.speech.with_streaming_response.create(
+            model="gpt-4o-mini-tts",
+            voice="alloy",
+            input=text
+        ) as response:
+            response.stream_to_file(speech_file_path)
+
+        return speech_file_path
+
+    except Exception as e:
+        return None
 # ===================== UI =====================
 st.title("📚 AI School Companion")
 
@@ -87,10 +106,19 @@ def lesson():
 
     st.markdown(f"## 📘 {topic}")
     #===============اضافه============================
-    if st.button("🎬 Generate Video Lesson Script"):
-        script = ai_video_script(subject, topic, lesson_data["explain"])
-        st.markdown("### 🎤 Video Script")
-        st.write(script)
+    if st.button("🎬 Generate AI Video Lesson"):
+    script = ai_video_script(subject, topic, lesson_data["explain"])
+
+    st.markdown("### 🎤 Video Script")
+    st.write(script)
+
+    st.markdown("### 🔊 Generating Voice...")
+    audio_file = ai_generate_voice(script)
+
+    if audio_file:
+        st.audio(audio_file)
+    else:
+        st.error("Voice generation failed")
 
     # ================= EXPLANATION =================
     if st.button("🧠 AI Explain"):
