@@ -1,130 +1,130 @@
 import streamlit as st
-import json
 
 # ===================== PAGE CONFIG =====================
-st.set_page_config(page_title="AI School Companion", layout="wide")
-
-# ===================== LOAD CURRICULUM =====================
-def load_curriculum():
-    with open("curriculum.json", "r", encoding="utf-8") as f:
-        return json.load(f)
-
-CURRICULUM = load_curriculum()
-
-# ===================== AI CLIENT =====================
-from openai import OpenAI
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+st.set_page_config(page_title="AI School MVP", layout="wide")
 
 # ===================== SESSION STATE =====================
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+
+if "current_user" not in st.session_state:
+    st.session_state.current_user = None
+
 if "grade" not in st.session_state:
     st.session_state.grade = "Grade 5"
 
+if "points" not in st.session_state:
+    st.session_state.points = 0
+
+if "completed_lessons" not in st.session_state:
+    st.session_state.completed_lessons = []
+
 if "progress" not in st.session_state:
-    st.session_state.progress = {"Math": 50, "Science": 50, "English": 50}
+    st.session_state.progress = {"Math": 0, "Science": 0, "English": 0}
 
-# ===================== AI FUNCTION =====================
-def ai_explain(subject, topic, text):
-    prompt = f"""
-You are a teacher.
+# ===================== CURRICULUM (MVP VERSION) =====================
+LESSON_CONTENT = {
+    "Grade 5": {
+        "Term 1": {
+            "Math": {
+                "Fractions": {
+                    "Lesson 1": {
+                        "explain": "Fractions represent parts of a whole. Example: 1/2 means half.",
+                        "quiz": {
+                            "question": "What is 1/2 of 10?",
+                            "answer": "5",
+                            "explanation": "10 ÷ 2 = 5"
+                        }
+                    }
+                }
+            },
+            "Science": {
+                "Ecosystem": {
+                    "Lesson 1": {
+                        "explain": "An ecosystem is living things interacting with environment.",
+                        "quiz": {
+                            "question": "Is a tree living?",
+                            "answer": "yes",
+                            "explanation": "Trees grow so they are living."
+                        }
+                    }
+                }
+            },
+            "English": {
+                "Grammar": {
+                    "Lesson 1": {
+                        "explain": "Grammar helps build correct sentences.",
+                        "quiz": {
+                            "question": "What is a noun?",
+                            "answer": "person place or thing",
+                            "explanation": "A noun is a person, place or thing."
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
-Explain clearly for school students:
+# ===================== AUTH =====================
+def auth():
+    st.title("🎓 AI School MVP")
 
-Subject: {subject}
-Topic: {topic}
-Content: {text}
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
 
-Make it simple and step by step.
-"""
+    if st.button("Login"):
+        st.session_state.logged_in = True
+        st.session_state.current_user = username
+        st.success("Logged in!")
 
-    res = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}]
-    )
+# ===================== HOME =====================
+def home():
+    st.title(f"Welcome {st.session_state.current_user}")
 
-    return res.choices[0].message.content
+    st.markdown(f"### 🏆 Points: {st.session_state.points}")
 
+    st.markdown("## 📚 Subjects")
 
-#=========اضافه==================================
-def ai_video_script(subject, topic, text):
-    prompt = f"""
-You are a professional teacher creating a video lesson.
+    if st.button("Math"):
+        st.session_state.subject = "Math"
+        st.session_state.page = "lesson"
 
-Create a short video script for students.
+    if st.button("Science"):
+        st.session_state.subject = "Science"
+        st.session_state.page = "lesson"
 
-Subject: {subject}
-Topic: {topic}
-Content: {text}
-
-Structure:
-- Introduction
-- Explanation step by step
-- Simple example
-- Summary
-
-Make it spoken, like a teacher talking.
-"""
-
-    res = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return res.choices[0].message.content
-#=============ADD============
-import tempfile
-
-def ai_generate_voice(text):
-    try:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_file:
-            speech_file_path = tmp_file.name
-
-        with client.audio.speech.with_streaming_response.create(
-            model="gpt-4o-mini-tts",
-            voice="alloy",
-            input=text
-        ) as response:
-            response.stream_to_file(speech_file_path)
-
-        return speech_file_path
-
-    except Exception as e:
-        return None
-# ===================== UI =====================
-st.title("📚 AI School Companion")
+    if st.button("English"):
+        st.session_state.subject = "English"
+        st.session_state.page = "lesson"
 
 # ===================== LESSON =====================
 def lesson():
     grade = st.session_state.grade
 
-    subjects = list(CURRICULUM[grade].keys())
-    subject = st.selectbox("Select Subject", subjects)
+    term = st.selectbox("Select Term", list(LESSON_CONTENT[grade].keys()))
+    subject = st.selectbox("Select Subject", list(LESSON_CONTENT[grade][term].keys()))
+    unit = st.selectbox("Select Unit", list(LESSON_CONTENT[grade][term][subject].keys()))
+    lesson_name = st.selectbox("Select Lesson", list(LESSON_CONTENT[grade][term][subject][unit].keys()))
 
-    topics = list(CURRICULUM[grade][subject].keys())
-    topic = st.selectbox("Select Topic", topics)
+    lesson_data = LESSON_CONTENT[grade][term][subject][unit][lesson_name]
 
-    lesson_data = CURRICULUM[grade][subject][topic]
-
-    st.markdown(f"## 📘 {topic}")
-    #===============اضافه============================
-    if st.button("🎬 Generate AI Video Lesson"):
-
-        script = ai_video_script(subject, topic, lesson_data["explain"])
-
-        st.markdown("### 🎤 Video Script")
-        st.write(script)
-
-        st.markdown("### 🔊 Generating Voice...")
-        audio_file = ai_generate_voice(script)
-
-        if audio_file:
-            st.audio(audio_file)
-        else:
-            st.error("Voice generation failed")
+    st.markdown(f"## 📘 {lesson_name}")
 
     # ================= EXPLANATION =================
-    if st.button("🧠 AI Explain"):
-        explanation = ai_explain(subject, topic, lesson_data["explain"])
-        st.success(explanation)
+    if st.button("🧠 Show Explanation"):
+        st.success(lesson_data["explain"])
+
+    # ================= COMPLETE LESSON =================
+    if st.button("✅ Mark Lesson as Completed"):
+        lesson_id = f"{grade}_{term}_{subject}_{unit}_{lesson_name}"
+
+        if lesson_id not in st.session_state.completed_lessons:
+            st.session_state.completed_lessons.append(lesson_id)
+            st.session_state.points += 10
+            st.success("Lesson Completed +10 Points 🎉")
+        else:
+            st.info("Already completed")
 
     # ================= QUIZ =================
     quiz = lesson_data["quiz"]
@@ -135,17 +135,22 @@ def lesson():
     answer = st.text_input("Your Answer")
 
     if st.button("Submit Answer"):
-        if answer.strip().lower() == quiz["answer"].lower():
+        if answer.strip().lower() == quiz["answer"]:
             st.success("Correct 🎉")
             st.info(quiz["explanation"])
-            st.session_state.progress[subject] += 5
+            st.session_state.points += 5
         else:
             st.error("Incorrect ❌")
             st.info(quiz["explanation"])
 
-    # ================= PROGRESS =================
-    st.markdown("### 📊 Progress")
-    st.write(st.session_state.progress)
+# ===================== ROUTER =====================
+if not st.session_state.logged_in:
+    auth()
+else:
+    if "page" not in st.session_state:
+        st.session_state.page = "home"
 
-# ===================== RUN APP =====================
-lesson()
+    if st.session_state.page == "home":
+        home()
+    elif st.session_state.page == "lesson":
+        lesson()
