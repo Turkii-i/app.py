@@ -86,7 +86,7 @@ def lesson():
     lesson_data = CURRICULUM[grade][subject][topic]
 
     st.markdown(f"## 📘 {topic}")
-    ===============اضافه============================
+    #===============اضافه============================
     if st.button("🎬 Generate Video Lesson Script"):
     script = ai_video_script(subject, topic, lesson_data["explain"])
     st.markdown("### 🎤 Video Script")
