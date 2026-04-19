@@ -22,6 +22,13 @@ if "completed_lessons" not in st.session_state:
 if "progress" not in st.session_state:
     st.session_state.progress = {"Math": 0, "Science": 0, "English": 0}
 
+if "subject_progress" not in st.session_state:
+    st.session_state.subject_progress = {
+        "Math": 0,
+        "Science": 0,
+        "English": 0
+    }
+
 # ===================== CURRICULUM (MVP VERSION) =====================
 LESSON_CONTENT = {
     "Grade 5": {
@@ -121,6 +128,19 @@ def home():
     if st.button("📊 View Report"):
         st.session_state.page = "report"
 
+st.markdown("## 📊 Subject Progress")
+
+for subject, value in st.session_state.subject_progress.items():
+    st.write(subject)
+    st.progress(min(value / 100, 1.0))
+
+def reward_message(points):
+    if points == 50:
+        st.success("🔥 Great Job! You're doing amazing!")
+    elif points == 100:
+        st.success("🏆 Excellent! Level Up!")
+    reward_message(st.session_state.points)
+
 # ===================== LESSON =====================
 def lesson():
     grade = st.session_state.grade
@@ -140,14 +160,17 @@ def lesson():
 
     # ================= COMPLETE LESSON =================
     if st.button("✅ Mark Lesson as Completed"):
-        lesson_id = f"{grade}_{term}_{subject}_{unit}_{lesson_name}"
+    lesson_id = f"{grade}_{term}_{subject}_{unit}_{lesson_name}"
 
-        if lesson_id not in st.session_state.completed_lessons:
-            st.session_state.completed_lessons.append(lesson_id)
-            st.session_state.points += 10
-            st.success("Lesson Completed +10 Points 🎉")
-        else:
-            st.info("Already completed")
+    if lesson_id not in st.session_state.completed_lessons:
+        st.session_state.completed_lessons.append(lesson_id)
+
+        st.session_state.points += 10
+        st.session_state.subject_progress[subject] += 10
+
+        st.success("Completed +10 Points 🎉")
+    else:
+        st.info("Already completed")
 
     # ================= QUIZ =================
     quiz = lesson_data["quiz"]
