@@ -87,8 +87,8 @@ def lesson():
 
     # ================= EXPLAIN =================
     if st.button("🧠 AI Explain"):
-    explanation = ai_explain(subject, topic, lesson_data["explain"])
-    st.success(explanation)
+        explanation = ai_explain(subject, topic, lesson_data["explain"])
+        st.success(explanation)
 
     # ================= QUIZ =================
     quiz = lesson_data["quiz"]
