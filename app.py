@@ -41,29 +41,95 @@ def get_level(points):
 # ===================== CURRICULUM =====================
 LESSON_CONTENT = {
     "Grade 5": {
+
+        # ================= TERM 1 =================
         "Term 1": {
+
             "Math": {
                 "Unit 1: Fractions": {
                     "Lesson 1: Introduction to Fractions": {
-                        "explain": "Fractions represent parts of a whole. Example: 1/2 means one out of two equal parts.",
+                        "video": "",
+                        "explain": """
+Fractions represent parts of a whole.
+For example, if a pizza is divided into 4 equal pieces and you eat 1 piece, you ate 1/4.
+
+The top number is called the numerator and shows how many parts you have.
+The bottom number is called the denominator and shows total parts.
+
+Fractions are used in daily life like cooking, sharing food, and measuring.
+""",
                         "quiz": {
                             "question": "What is 1/2 of 10?",
                             "answer": "5",
                             "explanation": "10 divided by 2 equals 5."
                         }
-                    },
-                    "Lesson 2: Comparing Fractions": {
-                        "explain": "To compare fractions, make denominators equal.",
+                    }
+                }
+            },
+
+            "Science": {
+                "Unit 1: Ecosystems": {
+                    "Lesson 1: Living and Non-Living Things": {
+                        "video": "",
+                        "explain": """
+Living things can grow, breathe, and reproduce.
+Examples: humans, animals, plants.
+
+Non-living things do not grow or reproduce.
+Examples: rocks, water, air.
+
+Plants are living because they grow and need sunlight.
+""",
                         "quiz": {
-                            "question": "Which is bigger: 1/2 or 1/3?",
-                            "answer": "1/2",
-                            "explanation": "1/2 is bigger than 1/3."
+                            "question": "Is water living or non-living?",
+                            "answer": "non-living",
+                            "explanation": "Water does not grow or reproduce."
                         }
                     }
-                },
+                }
+            },
+
+            "English": {
+                "Unit 1: Nouns": {
+                    "Lesson 1: What is a Noun": {
+                        "video": "",
+                        "explain": """
+A noun is a word that names a person, place, animal, or thing.
+
+Examples:
+- teacher (person)
+- school (place)
+- cat (animal)
+- book (thing)
+
+Every sentence needs a noun as the subject.
+""",
+                        "quiz": {
+                            "question": "Which word is a noun: run, apple, quickly?",
+                            "answer": "apple",
+                            "explanation": "Apple is a thing, so it is a noun."
+                        }
+                    }
+                }
+            }
+        },
+
+        # ================= TERM 2 =================
+        "Term 2": {
+
+            "Math": {
                 "Unit 2: Decimals": {
                     "Lesson 1: Introduction to Decimals": {
-                        "explain": "Decimals are another way to represent fractions.",
+                        "video": "",
+                        "explain": """
+Decimals are numbers that include a point like 0.5 or 1.2.
+
+They are another way to write fractions.
+For example:
+0.5 = 1/2
+
+Decimals are used in money, measurements, and science.
+""",
                         "quiz": {
                             "question": "What is 0.5 + 0.5?",
                             "answer": "1",
@@ -71,13 +137,71 @@ LESSON_CONTENT = {
                         }
                     }
                 }
+            },
+
+            "Science": {
+                "Unit 2: Energy": {
+                    "Lesson 1: Types of Energy": {
+                        "video": "",
+                        "explain": """
+Energy is the ability to do work.
+
+Types of energy:
+- Light energy (sun)
+- Heat energy (fire)
+- Sound energy (music)
+
+We use energy in everything around us.
+""",
+                        "quiz": {
+                            "question": "What type of energy comes from the sun?",
+                            "answer": "light",
+                            "explanation": "The sun gives light and heat energy."
+                        }
+                    }
+                }
+            },
+
+            "English": {
+                "Unit 2: Verbs": {
+                    "Lesson 1: Action Verbs": {
+                        "video": "",
+                        "explain": """
+A verb is a word that shows action.
+
+Examples:
+run, jump, eat, write
+
+Every sentence must have a verb to show what is happening.
+""",
+                        "quiz": {
+                            "question": "Which word is a verb: happy, run, blue?",
+                            "answer": "run",
+                            "explanation": "Run shows action, so it is a verb."
+                        }
+                    }
+                }
             }
         },
-        "Term 2": {
+
+        # ================= TERM 3 =================
+        "Term 3": {
+
             "Math": {
                 "Unit 3: Geometry": {
                     "Lesson 1: Basic Shapes": {
-                        "explain": "Geometry studies shapes and space.",
+                        "video": "",
+                        "explain": """
+Geometry is the study of shapes.
+
+Basic shapes:
+- Circle
+- Square
+- Triangle
+- Rectangle
+
+Each shape has different sides and properties.
+""",
                         "quiz": {
                             "question": "How many sides does a triangle have?",
                             "answer": "3",
@@ -85,135 +209,49 @@ LESSON_CONTENT = {
                         }
                     }
                 }
-            }
-        },
-        "Term 3": {
-            "Math": {
-                "Unit 4: Data & Graphs": {
-                    "Lesson 1: Bar Graphs": {
-                        "explain": "Bar graphs help compare data visually.",
+            },
+
+            "Science": {
+                "Unit 3: Human Body": {
+                    "Lesson 1: The Heart": {
+                        "video": "",
+                        "explain": """
+The heart is an important organ.
+
+It pumps blood to all parts of the body.
+Blood carries oxygen and nutrients.
+
+Without the heart, humans cannot survive.
+""",
                         "quiz": {
-                            "question": "What do bar graphs compare?",
-                            "answer": "data",
-                            "explanation": "Bar graphs are used to compare data."
+                            "question": "What does the heart pump?",
+                            "answer": "blood",
+                            "explanation": "The heart pumps blood in the body."
                         }
                     }
                 }
-            }
-        }
-    }
-},
+            },
 
-        "Term 1": {
-    "Science": {
-        "Unit 1: Ecosystems": {
-            "Lesson 1: Living and Non-living Things": {
-                "video": "",
-                "explain": """
-Living things grow, breathe, and reproduce. 
-Examples include humans, animals, and plants. 
-Non-living things do not grow or reproduce. 
-Examples include rocks, water, and air. 
-Plants are living because they grow and make food using sunlight.
-""",
-                "quiz": {
-                    "question": "Is water living or non-living?",
-                    "answer": "non-living",
-                    "explanation": "Water does not grow or reproduce."
-                }
-            }
-        }
-    },
-    "English": {
-        "Unit 1: Parts of Speech": {
-            "Lesson 1: Nouns": {
-                "video": "",
-                "explain": """
-A noun is a word that names a person, place, animal, or thing.
-For example: teacher, school, cat, book.
-If you can see it, touch it, or name it, it is usually a noun.
-Nouns are very important because every sentence needs a subject.
-""",
-                "quiz": {
-                    "question": "Which word is a noun: run, apple, quickly?",
-                    "answer": "apple",
-                    "explanation": "Apple is a thing, so it is a noun."
-                }
-            }
-        }
-    }
-},
-        "Term 2": {
-    "Science": {
-        "Unit 2: Energy": {
-            "Lesson 1: Types of Energy": {
-                "video": "",
-                "explain": """
-Energy is the ability to do work.
-There are many types of energy such as heat, light, and sound.
-The sun gives us light and heat energy.
-Electricity is another form of energy we use every day.
-""",
-                "quiz": {
-                    "question": "The sun gives us what type of energy?",
-                    "answer": "light",
-                    "explanation": "The sun provides light and heat energy."
-                }
-            }
-        }
-    },
-    "English": {
-        "Unit 2: Verbs": {
-            "Lesson 1: Action Verbs": {
-                "video": "",
-                "explain": """
-A verb is a word that shows action.
-Examples include run, jump, eat, and write.
-Every sentence must have a verb.
-Without a verb, the sentence is not complete.
-""",
-                "quiz": {
-                    "question": "Which word is a verb: happy, run, blue?",
-                    "answer": "run",
-                    "explanation": "Run shows action, so it is a verb."
-                }
-            }
-        }
-    }
-},
-        "Term 3": {
-    "Science": {
-        "Unit 3: Human Body": {
-            "Lesson 1: The Heart": {
-                "video": "",
-                "explain": """
-The heart is an important organ in our body.
-It pumps blood to all parts of the body.
-Blood carries oxygen and nutrients.
-Without the heart, the body cannot survive.
-""",
-                "quiz": {
-                    "question": "What does the heart pump?",
-                    "answer": "blood",
-                    "explanation": "The heart pumps blood around the body."
-                }
-            }
-        }
-    },
-    "English": {
-        "Unit 3: Adjectives": {
-            "Lesson 1: Describing Words": {
-                "video": "",
-                "explain": """
+            "English": {
+                "Unit 3: Adjectives": {
+                    "Lesson 1: Describing Words": {
+                        "video": "",
+                        "explain": """
 Adjectives describe nouns.
-They tell us more about a person or thing.
-For example: big, small, beautiful, fast.
-In the sentence 'The big dog', big is an adjective.
+
+Examples:
+big, small, fast, beautiful
+
+Example sentence:
+The big dog is running.
+"big" is the adjective.
 """,
-                "quiz": {
-                    "question": "Which word is an adjective: dog, big, run?",
-                    "answer": "big",
-                    "explanation": "Big describes the noun."
+                        "quiz": {
+                            "question": "Which word is an adjective: dog, big, run?",
+                            "answer": "big",
+                            "explanation": "Big describes the noun."
+                        }
+                    }
                 }
             }
         }
