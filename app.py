@@ -143,8 +143,7 @@ Nouns are very important because every sentence needs a subject.
         }
     }
 },
-
-"Term 2": {
+        "Term 2": {
     "Science": {
         "Unit 2: Energy": {
             "Lesson 1: Types of Energy": {
@@ -182,7 +181,7 @@ Without a verb, the sentence is not complete.
         }
     }
 },
-"Term 3": {
+        "Term 3": {
     "Science": {
         "Unit 3: Human Body": {
             "Lesson 1: The Heart": {
@@ -220,7 +219,6 @@ In the sentence 'The big dog', big is an adjective.
         }
     }
 }
-
 # ===================== AUTH =====================
 def auth():
     st.title("🎓 AI School MVP")
