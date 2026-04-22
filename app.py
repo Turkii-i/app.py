@@ -102,7 +102,7 @@ LESSON_CONTENT = {
             }
         }
     }
-}
+},
 
         "Term 1": {
     "Science": {
