@@ -104,6 +104,123 @@ LESSON_CONTENT = {
     }
 }
 
+"Term 1": {
+    "Science": {
+        "Unit 1: Ecosystems": {
+            "Lesson 1: Living and Non-living Things": {
+                "video": "",
+                "explain": """
+Living things grow, breathe, and reproduce. 
+Examples include humans, animals, and plants. 
+Non-living things do not grow or reproduce. 
+Examples include rocks, water, and air. 
+Plants are living because they grow and make food using sunlight.
+""",
+                "quiz": {
+                    "question": "Is water living or non-living?",
+                    "answer": "non-living",
+                    "explanation": "Water does not grow or reproduce."
+                }
+            }
+        }
+    },
+    "English": {
+        "Unit 1: Parts of Speech": {
+            "Lesson 1: Nouns": {
+                "video": "",
+                "explain": """
+A noun is a word that names a person, place, animal, or thing.
+For example: teacher, school, cat, book.
+If you can see it, touch it, or name it, it is usually a noun.
+Nouns are very important because every sentence needs a subject.
+""",
+                "quiz": {
+                    "question": "Which word is a noun: run, apple, quickly?",
+                    "answer": "apple",
+                    "explanation": "Apple is a thing, so it is a noun."
+                }
+            }
+        }
+    }
+},
+
+"Term 2": {
+    "Science": {
+        "Unit 2: Energy": {
+            "Lesson 1: Types of Energy": {
+                "video": "",
+                "explain": """
+Energy is the ability to do work.
+There are many types of energy such as heat, light, and sound.
+The sun gives us light and heat energy.
+Electricity is another form of energy we use every day.
+""",
+                "quiz": {
+                    "question": "The sun gives us what type of energy?",
+                    "answer": "light",
+                    "explanation": "The sun provides light and heat energy."
+                }
+            }
+        }
+    },
+    "English": {
+        "Unit 2: Verbs": {
+            "Lesson 1: Action Verbs": {
+                "video": "",
+                "explain": """
+A verb is a word that shows action.
+Examples include run, jump, eat, and write.
+Every sentence must have a verb.
+Without a verb, the sentence is not complete.
+""",
+                "quiz": {
+                    "question": "Which word is a verb: happy, run, blue?",
+                    "answer": "run",
+                    "explanation": "Run shows action, so it is a verb."
+                }
+            }
+        }
+    }
+},
+"Term 3": {
+    "Science": {
+        "Unit 3: Human Body": {
+            "Lesson 1: The Heart": {
+                "video": "",
+                "explain": """
+The heart is an important organ in our body.
+It pumps blood to all parts of the body.
+Blood carries oxygen and nutrients.
+Without the heart, the body cannot survive.
+""",
+                "quiz": {
+                    "question": "What does the heart pump?",
+                    "answer": "blood",
+                    "explanation": "The heart pumps blood around the body."
+                }
+            }
+        }
+    },
+    "English": {
+        "Unit 3: Adjectives": {
+            "Lesson 1: Describing Words": {
+                "video": "",
+                "explain": """
+Adjectives describe nouns.
+They tell us more about a person or thing.
+For example: big, small, beautiful, fast.
+In the sentence 'The big dog', big is an adjective.
+""",
+                "quiz": {
+                    "question": "Which word is an adjective: dog, big, run?",
+                    "answer": "big",
+                    "explanation": "Big describes the noun."
+                }
+            }
+        }
+    }
+}
+
 # ===================== AUTH =====================
 def auth():
     st.title("🎓 AI School MVP")
