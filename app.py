@@ -43,43 +43,59 @@ LESSON_CONTENT = {
     "Grade 5": {
         "Term 1": {
             "Math": {
-                "Fractions": {
-                    "Unit 1": {
-                        "Lesson 1": {
-                            "explain": "Fractions represent parts of a whole.",
-                            "quiz": {
-                                "question": "What is 1/2 of 10?",
-                                "answer": "5",
-                                "explanation": "10 ÷ 2 = 5"
-                            }
+                "Unit 1: Fractions": {
+                    "Lesson 1: Introduction to Fractions": {
+                        "explain": "Fractions represent parts of a whole. Example: 1/2 means one out of two equal parts.",
+                        "quiz": {
+                            "question": "What is 1/2 of 10?",
+                            "answer": "5",
+                            "explanation": "10 divided by 2 equals 5."
+                        }
+                    },
+                    "Lesson 2: Comparing Fractions": {
+                        "explain": "To compare fractions, make denominators equal.",
+                        "quiz": {
+                            "question": "Which is bigger: 1/2 or 1/3?",
+                            "answer": "1/2",
+                            "explanation": "1/2 is bigger than 1/3."
+                        }
+                    }
+                },
+                "Unit 2: Decimals": {
+                    "Lesson 1: Introduction to Decimals": {
+                        "explain": "Decimals are another way to represent fractions.",
+                        "quiz": {
+                            "question": "What is 0.5 + 0.5?",
+                            "answer": "1",
+                            "explanation": "0.5 + 0.5 equals 1."
                         }
                     }
                 }
-            },
-            "Science": {
-                "Ecosystem": {
-                    "Unit 1": {
-                        "Lesson 1": {
-                            "explain": "Ecosystem is interaction of living things.",
-                            "quiz": {
-                                "question": "Is a tree living?",
-                                "answer": "yes",
-                                "explanation": "Trees grow so they are living."
-                            }
+            }
+        },
+        "Term 2": {
+            "Math": {
+                "Unit 3: Geometry": {
+                    "Lesson 1: Basic Shapes": {
+                        "explain": "Geometry studies shapes and space.",
+                        "quiz": {
+                            "question": "How many sides does a triangle have?",
+                            "answer": "3",
+                            "explanation": "A triangle has 3 sides."
                         }
                     }
                 }
-            },
-            "English": {
-                "Grammar": {
-                    "Unit 1": {
-                        "Lesson 1": {
-                            "explain": "Grammar builds correct sentences.",
-                            "quiz": {
-                                "question": "What is a noun?",
-                                "answer": "person place or thing",
-                                "explanation": "A noun is a person, place or thing."
-                            }
+            }
+        },
+        "Term 3": {
+            "Math": {
+                "Unit 4: Data & Graphs": {
+                    "Lesson 1: Bar Graphs": {
+                        "explain": "Bar graphs help compare data visually.",
+                        "quiz": {
+                            "question": "What do bar graphs compare?",
+                            "answer": "data",
+                            "explanation": "Bar graphs are used to compare data."
                         }
                     }
                 }
