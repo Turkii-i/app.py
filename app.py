@@ -104,7 +104,7 @@ LESSON_CONTENT = {
     }
 }
 
-"Term 1": {
+        "Term 1": {
     "Science": {
         "Unit 1: Ecosystems": {
             "Lesson 1: Living and Non-living Things": {
